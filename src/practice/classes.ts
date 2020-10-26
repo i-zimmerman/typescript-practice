@@ -2,9 +2,11 @@
 
 // abstract class , abstract method / property use when want to enforce all inheriting classes to have
 // a common property / method
-// inheriting class should provide the returned value
+// inheriting class should provide the returned value / implement this method, prop
 
 // abstract classes can't be instantiated themselves
+
+// singleton pattern ensures that only one instance of the certain class is created
 
 abstract class Department {
   // private properties are only accessible from inside the class where they are defined
@@ -33,6 +35,7 @@ abstract class Department {
 class ITDepartment extends Department {
   private admins: string[] = [];
   private hiddenWord: string = "hidden word";
+  private static instance: ITDepartment;
 
   get hidden() {
     // getter always should return something
@@ -46,8 +49,17 @@ class ITDepartment extends Department {
     this.hiddenWord = value;
   }
 
-  constructor(id: number) {
+  private constructor(id: number) {
     super("IT", id);
+  }
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ITDepartment(139);
+
+    return this.instance;
   }
 
   describe() {
@@ -67,7 +79,10 @@ class ITDepartment extends Department {
   }
 }
 
-// const accounting = new Department("Accounting", 12); --> cannot create instance of abstract class
+// const accounting = new Department( 12); --> cannot create instance of abstract class
+
+const it = ITDepartment.getInstance();
+
 // accounting.describe();
 // accounting.addEmployee("John");
 // accounting.seeEmployees();
