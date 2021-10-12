@@ -5,7 +5,7 @@ function add(n1: number, n2: number) {
 function printResult(num: number) {
   console.log("Result: " + num);
 }
-
+// void in callback tells that we are not going to do anything with the return value
 function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
   const result = n1 + n2;
   cb(result);

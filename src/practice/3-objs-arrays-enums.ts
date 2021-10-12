@@ -28,6 +28,13 @@ const person2 = {
   role: Role.ADMIN,
 };
 
+const tuple: [string, number] = ["2", 2];
+
+// tuple.push({});
+// push works with tuples, cause it is at runtime
+// but still TS will inference that array can hold only spec types
+// console.log(tuple);
+
 let favoriteActivities: string[];
 favoriteActivities = ["Sports"];
 
