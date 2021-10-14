@@ -1,5 +1,13 @@
 // INTERFACE
 
+// type vs interface
+// interfaces can only be used to describe a structure of an object
+// types and interfaces can often be used interchangeably
+// types can store union types inside of them (interfaces can not)
+// interfaces are much more clear
+
+// the interface can be used as a contract, a class has to implement and then adhere to it
+
 // can only provide structure
 // enforce structure on objects and classes
 interface Named {

@@ -10,11 +10,13 @@
 
 abstract class Department {
   // private properties are only accessible from inside the class where they are defined
-  // use protected if want to access in every class that extends this.
+  // use protected if want to access in every class that extends this. but still remain unaccessible from outside (only inside, like private)
   protected employees: string[] = []; // private property only accessible inside the class
 
   constructor(public name: string, protected readonly id: number) {
     // shortcut --> pass props directly into constructor without initialization
+    // private properties are accessible only withing the class that defined them
+    // cannot be accessed from outside or from the child
   }
 
   static logSomething() {
