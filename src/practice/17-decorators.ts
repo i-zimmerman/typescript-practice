@@ -108,3 +108,127 @@ class PersonH {
 // property decorators allow to do some setup work,
 // store some meta data, add some extra functionality behind the scenes
 // before the object has been instantiated
+
+// can actually change the constructor of a class, props and methods
+function WithTemplate2(elId: string, template: string) {
+  console.log("TEMPLATE DECORATOR");
+  return function <T extends { new (...args: any[]): { name: string } }>(
+    ogConstructor: T
+  ) {
+    return class extends ogConstructor {
+      constructor(..._: any[]) {
+        super();
+        console.log("RENDERING TEMPLATE");
+        const el = document.querySelector(elId);
+
+        if (el) {
+          el.innerHTML = this.name;
+          // or use template
+        }
+      }
+    };
+  };
+}
+
+@WithTemplate2("div1", "<h1></h1>")
+class SomePerson {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+// when called on props and methods
+// can change property descriptors of properties returning an object
+// example
+
+function Autobind(_: any, _2: string | Symbol, descriptor: PropertyDescriptor) {
+  const ogMethod = descriptor.value;
+
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: false,
+    enumerable: false,
+    get() {
+      const boundFc = ogMethod.bind(this);
+      return boundFc;
+    },
+  };
+
+  return adjDescriptor;
+}
+
+class Printer {
+  message = "this works!";
+
+  @Autobind
+  showMessage() {
+    console.log(this.message);
+  }
+}
+
+// decorators for validations
+interface ValidatorConfig {
+  [property: string]: {
+    [validatableProp: string]: string[]; //required, positive...
+  };
+}
+
+const registeredValidators: ValidatorConfig = {};
+
+function validate(obj: any) {
+  const objValidatorsConfig = registeredValidators[obj.constructor.name];
+
+  if (!objValidatorsConfig) return true;
+
+  let isValid = true;
+  for (const prop in objValidatorsConfig) {
+    for (const validator of objValidatorsConfig[prop]) {
+      switch (validator) {
+        case "required":
+          isValid = isValid && !!obj[prop];
+        case "positive":
+          isValid = isValid && obj[prop] > 0;
+      }
+    }
+
+    return isValid;
+  }
+}
+
+function Required(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["required"],
+  };
+}
+
+function PosNumber(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["positive"],
+  };
+}
+
+class Course {
+  @Required
+  title: string;
+  @PosNumber
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const course = new Course("title", 130);
+const emptyCourse = new Course("", 0);
+
+if (!validate(course)) {
+  // do something
+}
+
+if (!validate(emptyCourse)) {
+  // do something
+}
